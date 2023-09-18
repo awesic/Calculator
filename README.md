@@ -8,6 +8,8 @@ In addition to its mathematical capabilities, this calculator supports the use o
 
 Furthermore, the project considers a credit and deposit calculator.
 
+<img src="src/calculator.jpg" width="250">
+
 ### Technologies
 
 \- stack / queue \
