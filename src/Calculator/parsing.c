@@ -1,4 +1,4 @@
-#include "smartcalc.h"
+#include "calc.h"
 
 int parsing_char(char *str, queue *que, stack *st, int place, int *is_unary) {
   char *token = str + place;

@@ -13,7 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDialog>
 
-#include "../SmartCalc/QCustomPlotLib/qcustomplot.h"
+#include "../Calculator/QCustomPlotLib/qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 

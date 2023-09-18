@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "smartcalc.h"
+#include "calc.h"
 #include "validator.h"
 
 #ifdef __cplusplus

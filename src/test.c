@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SmartCalc/smartcalc.h"
-#include "SmartCalc/validator.h"
+#include "Calculator/calc.h"
+#include "Calculator/validator.h"
 
 #define EPSILON 1e-6
 #define PI 3.1415926

@@ -1,7 +1,7 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
-#include "smartcalc.h"
+#include "calc.h"
 
 int lengthCheck(char *str);
 int divisionByZero(char *str);

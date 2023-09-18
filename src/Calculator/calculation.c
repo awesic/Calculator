@@ -1,4 +1,4 @@
-#include "smartcalc.h"
+#include "calc.h"
 
 int is_binary(int id) {
   return id == ADD_ID || id == SUB_ID || id == MUL_ID || id == DIV_ID ||

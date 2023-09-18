@@ -1,40 +1,42 @@
-QMAKE:=/Users/awesic/Qt/6.5.2/macos/bin/qmake
+# QMAKE:=/Users/{user}/Qt/6.5.2/macos/bin/qmake
+
+# If you're in Linux / Windows change APPICATIONS to the applications folder
 APPLICATIONS:=Applications
 
 CC:=gcc
-CFLAGS:=-g -Wall -Werror -Wextra -std=c11 --coverage
+CFLAGS:= -g -Wall -Werror -Wextra -std=c11
 BUILD := ./build/
 OBJ_DIR:=$(BUILD)objects
-APP:=$(BUILD)SmartCalc.app
+APP:=$(BUILD)Calculator.app
 TEST_FLAGS:=-lcheck -lpthread -pthread -lm
 TESTS:=test
 
 SOURCES += \
-    ./SmartCalc/QCustomPlotLib/qcustomplot.cpp \
-    ./SmartCalc/calculation.c \
-    ./SmartCalc/creditmodel.cpp \
-    ./SmartCalc/depositmodel.cpp \
-    ./SmartCalc/main.cpp \
-    ./SmartCalc/mainwindow.cpp \
-    ./SmartCalc/parsing.c \
-    ./SmartCalc/plotgraphic.cpp \
-    ./SmartCalc/queue.c \
-    ./SmartCalc/stack.c \
-    ./SmartCalc/validator.c
+    ./Calculator/QCustomPlotLib/qcustomplot.cpp \
+    ./Calculator/calculation.c \
+    ./Calculator/creditmodel.cpp \
+    ./Calculator/depositmodel.cpp \
+    ./Calculator/main.cpp \
+    ./Calculator/mainwindow.cpp \
+    ./Calculator/parsing.c \
+    ./Calculator/plotgraphic.cpp \
+    ./Calculator/queue.c \
+    ./Calculator/stack.c \
+    ./Calculator/validator.c
 
 HEADERS += \
-    ./SmartCalc/QCustomPlotLib/qcustomplot.h \
-    ./SmartCalc/creditmodel.h \
-    ./SmartCalc/defines.h \
-    ./SmartCalc/depositmodel.h \
-    ./SmartCalc/mainwindow.h \
-    ./SmartCalc/plotgraphic.h \
-    ./SmartCalc/queue_stack.h \
-    ./SmartCalc/smartcalc.h \
-    ./SmartCalc/validator.h
+    ./Calculator/QCustomPlotLib/qcustomplot.h \
+    ./Calculator/creditmodel.h \
+    ./Calculator/defines.h \
+    ./Calculator/depositmodel.h \
+    ./Calculator/mainwindow.h \
+    ./Calculator/plotgraphic.h \
+    ./Calculator/queue_stack.h \
+    ./Calculator/Calculator.h \
+    ./Calculator/validator.h
 
-SOURCE := SmartCalc/%.c
-SRC := SmartCalc/*.c
+SOURCE := Calculator/%.c
+SRC := Calculator/*.c
 
 ifeq ($(shell uname -s),Linux)
 	TEST_FLAGS+=-lsubunit -lgcov
@@ -42,37 +44,38 @@ endif
 
 all: build
 
-build: $(BUILD)SmartCalc.pro
+build: $(BUILD)Calculator.pro
 	cd $(BUILD)
-	$(QMAKE) -o $(BUILD)Makefile $(BUILD)SmartCalc.pro -spec macx-clang CONFIG+=debug CONFIG+=qml_debug
+# $(QMAKE) -o $(BUILD)Makefile $(BUILD)Calculator.pro -spec macx-clang CONFIG+=debug CONFIG+=qml_debug
+	qmake -o $(BUILD)Makefile $(BUILD)Calculator.pro -spec macx-clang CONFIG+=debug CONFIG+=qml_debug
 	make -C $(BUILD)
 
-./$(BUILD)SmartCalc.pro:
-	cp SmartCalc.pro $(BUILD)
+./$(BUILD)Calculator.pro:
+	cp Calculator.pro $(BUILD)
 
 ./$(BUILD)%.o: $(SOURCE)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 install: build
-	@mkdir $(HOME)/$(APPLICATIONS)/SmartCalc/ 2>/dev/null
-	cp -rf $(APP) $(HOME)/$(APPLICATIONS)/SmartCalc/
+	@mkdir $(HOME)/$(APPLICATIONS)/Calculator/ 2>/dev/null
+	cp -rf $(APP) $(HOME)/$(APPLICATIONS)/Calculator/
 	make clean_wo_app
 
 uninstall:
-	rm -rf $(HOME)/$(APPLICATIONS)/SmartCalc
+	rm -rf $(HOME)/$(APPLICATIONS)/Calculator
 
 clean:
-	rm -rf *.info ./$(BUILD)*.o ./$(BUILD)*.gcda ./$(BUILD)*.gcno ./$(BUILD)$(TESTS) ./$(BUILD)*.app ./$(BUILD)*.pro ./$(BUILD).qmake.stash ./$(BUILD)Makefile ./$(BUILD)*.cpp ./$(BUILD)ui_mainwindow.h report *.tar
+	rm -rf *.info ./$(BUILD)*.o ./$(BUILD)*.gcda ./$(BUILD)*.gcno ./$(BUILD)$(TESTS) ./$(BUILD)*.app ./$(BUILD)*.pro ./$(BUILD).qmake.stash ./$(BUILD)Makefile ./$(BUILD)*.cpp ./$(BUILD)moc* ./$(BUILD)ui_mainwindow.h report *.tar
 
-clean_wo_app:
-	rm -rf *.info ./$(BUILD)*.o ./$(BUILD)*.gcda ./$(BUILD)*.gcno ./$(BUILD)$(TESTS) ./$(BUILD)*.pro ./$(BUILD).qmake.stash ./$(BUILD)Makefile ./$(BUILD)*.cpp ./$(BUILD)ui_mainwindow.h report
+clean_wo_app: # clean without rm app
+	rm -rf *.info ./$(BUILD)*.o ./$(BUILD)*.gcda ./$(BUILD)*.gcno ./$(BUILD)$(TESTS) ./$(BUILD)*.pro ./$(BUILD).qmake.stash ./$(BUILD)Makefile ./$(BUILD)moc* ./$(BUILD)*.cpp ./$(BUILD)ui_mainwindow.h report
 
 dvi:
 	open -a 'google chrome' doc.html
 
 dist:
-	tar -czvf SmartCalc.tar $(HOME)/$(APPLICATIONS)/SmartCalc/
-	# gzip $(HOME)/$(APPLICATIONS)/SmartCalc/ ../SmartCalc.tar
+	tar -czvf Calculator.tar $(HOME)/$(APPLICATIONS)/Calculator/ doc.html
+# gzip $(HOME)/$(APPLICATIONS)/Calculator/ ../Calculator.tar
 
 ./$(BUILD)$(TESTS).o: $(TESTS).c 
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -83,15 +86,13 @@ test: $(BUILD)queue.o $(BUILD)stack.o $(BUILD)validator.o $(BUILD)parsing.o $(BU
 
 rebuild: clean all
 
-gcov_report: clean $(TESTS)
-	lcov -t "smartcalc" -o smartcalc.info -c -d $(BUILD)
-	genhtml -o report smartcalc.info
-	open -a 'google chrome' ./report/index.html
+gcov_report: CFLAGS += --coverage
+gcov_report: report
 
-style:
-	clang-format -style=google -i $(TESTS).c $(SRC)
-	# python3 ./cpplint.py --extension=c $(TESTS).c $(SRC)
-	# cppcheck --enable=all --inconclusive --suppress=missingIncludeSystem $(TESTS).c $(SRC)
+report: clean $(TESTS)
+	lcov -t "Calculator" -o Calculator.info -c -d $(BUILD)
+	genhtml -o report Calculator.info
+	open -a 'google chrome' ./report/index.html
 
 leaks: clean $(TESTS)
 ifeq ($(shell uname -s),Linux)

@@ -1,4 +1,4 @@
-#include "smartcalc.h"
+#include "validator.h"
 
 int lengthCheck(char *str) { return (strlen(str) > 255) ? 1 : 0; }
 
